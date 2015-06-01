@@ -8,8 +8,8 @@ module ApplicationHelper
       nav += '<li>' + link_to("Edit profile", edit_users_path)
       nav += '<li>' + link_to("Log Out #{@current_user.name}", login_path, :method => :delete, :confirm => 'Are you sure?')  + '</li>'
     else
-      nav +=  '<li>' + link_to('Sign Up', new_user_path) + '</li>'
-      nav +=  '<li>' + link_to('Login', login_path) + '</li>'
+      nav += '<li>' + link_to('Sign Up', new_user_path) + '</li>'
+      nav += '<li>' + link_to('Login', login_path) + '</li>'
     end
     nav
   end
