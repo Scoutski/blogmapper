@@ -1,7 +1,7 @@
 <h1>Sign Up Form</h1>
 
-<% @user.errors.any? %>
-  <h1> You done goofed, son!</h1>
+<% if @user.errors.any? %>
+  <h1>Login error</h1>
   <ol>
   <% @user.errors.full_messages.each do |msg| %>
     <li><%= msg %></li>
@@ -9,7 +9,7 @@
   </ol>
 <% end %>
 
-<% form_for @user do |f| %>
+<%= form_for @user do |f| %>
   <p>
     <%= f.label :name %>
     <%= f.text_field :name, :autofocus => true %>
@@ -22,8 +22,6 @@
     <%= f.label :password_confirmation %>
     <%= f.password_field :password_confirmation %>
   </p>
-  <p>
     <%= f.label :submit %>
     <%= f.submit %>
-  </p>
 <% end %>
