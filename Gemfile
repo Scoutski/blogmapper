@@ -33,6 +33,7 @@ gem 'bcrypt', '~> 3.1.7'
 gem 'remove_turbolinks'
 gem 'bootstrap-sass', '~> 3.3.1'
 gem 'autoprefixer-rails'
+gem 'cloudinary'
 
 group :development do
   gem 'pry-rails'

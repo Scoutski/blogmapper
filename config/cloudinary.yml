@@ -1,0 +1,19 @@
+---
+development:
+  cloud_name: dmdxzvzi8
+  api_key: '938821824448455'
+  api_secret: ILqsUB1-18h6DRl7NMPqvF6zv_c
+  enhance_image_tag: true
+  static_image_support: false
+production:
+  cloud_name: dmdxzvzi8
+  api_key: '938821824448455'
+  api_secret: ILqsUB1-18h6DRl7NMPqvF6zv_c
+  enhance_image_tag: true
+  static_image_support: true
+test:
+  cloud_name: dmdxzvzi8
+  api_key: '938821824448455'
+  api_secret: ILqsUB1-18h6DRl7NMPqvF6zv_c
+  enhance_image_tag: true
+  static_image_support: false
