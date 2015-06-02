@@ -1,6 +1,7 @@
 var slideExists = false;
 var marker_array = [];
 var prev_infowindow = false;
+var map;
 
 $(document).ready(function() {
     for (var h = 0; h < gon.blogs.length; h++) {
@@ -17,7 +18,7 @@ $(document).ready(function() {
             zoom: 12,
             mapTypeId: google.maps.MapTypeId.ROADMAP
         }
-        var map = new google.maps.Map(mapCanvas, mapOptions);
+        map = new google.maps.Map(mapCanvas, mapOptions);
 
         var infowindow;
         for (var i = 0; i < gon.posts.length; i++) {
