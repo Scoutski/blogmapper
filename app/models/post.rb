@@ -11,6 +11,8 @@
 #  created_at      :datetime
 #  updated_at      :datetime
 #  blog_id         :integer
+#  latitude        :text
+#  longitude       :text
 #
 
 class Post < ActiveRecord::Base

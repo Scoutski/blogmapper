@@ -1,1 +1,9 @@
-<div id="map-canvas"></div>
+<div class="row">
+  <div class="col-md-2">
+    <h2>Blog List</h2>
+      <% @blogs.each do |blog| %>
+        <%= link_to(blog.name, blog) %><br>
+      <% end %>
+  </div>
+  <div class="col-md-10"><div id="map-canvas"></div></div>
+</div>

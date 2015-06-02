@@ -34,6 +34,8 @@ gem 'remove_turbolinks'
 gem 'bootstrap-sass', '~> 3.3.1'
 gem 'autoprefixer-rails'
 gem 'cloudinary'
+gem 'gon'
+gem 'geocoder'
 
 group :development do
   gem 'pry-rails'

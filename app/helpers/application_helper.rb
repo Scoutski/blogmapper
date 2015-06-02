@@ -1,7 +1,7 @@
 module ApplicationHelper
   def intellinav_left
     nav = ''
-    if @current_user.present?
+    if @current_user.present? && @current_user.admin?
       nav+= '<li>' + link_to('Blogs', blogs_path) + '</li>'
     end
     nav

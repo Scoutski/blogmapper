@@ -10,6 +10,9 @@ class PostsController < ApplicationController
   def create
     @post = Post.new post_params
     if @post.save
+      post.latitude = Geocoder.search(post.restaurant_loc)[0].geometry['location']['lat']
+      post.longitude = Geocoder.search(post.restaurant_loc)[0].geometry['location']['lng']     
+      post.save
       redirect_to root_path
     else
       render :new
@@ -27,6 +30,9 @@ class PostsController < ApplicationController
   def update
     post = Post.find params[:id]
     post.update post_params
+    post.latitude = Geocoder.search(post.restaurant_loc)[0].geometry['location']['lat']
+    post.longitude = Geocoder.search(post.restaurant_loc)[0].geometry['location']['lng']     
+    post.save
     redirect_to post_path
   end
 
