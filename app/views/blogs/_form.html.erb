@@ -1,0 +1,20 @@
+<%= form_for @blog do |f| %>
+  <p>
+    <%= f.label :name %>
+    <%= f.text_field :name, :autofocus => true %>
+  </p>
+  <p>
+    <%= f.label :blog_url %>
+    <%= f.text_field :blog_url %>
+  </p>
+  <p>
+    <%= f.label :image_url %>
+    <%= f.text_field :image_url %>
+  </p>
+  <p>
+    <%= f.label :category %>
+    <%= f.text_field :category %>
+  </p>
+    <%= f.label :submit %>
+    <%= f.submit %>
+<% end %>

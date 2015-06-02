@@ -10,6 +10,7 @@
 #  restaurant_loc  :text
 #  created_at      :datetime
 #  updated_at      :datetime
+#  blog_id         :integer
 #
 
 class Post < ActiveRecord::Base

@@ -1,0 +1,11 @@
+<h1><%= @blog.name %></h1>
+<h3>Category: <%= @blog.category %></h3>
+<h3>Blog Posts:</h3>
+<ul>
+  <% if @blog.posts.any? %>
+    <% @blog.posts.each do |post| %>
+      <li><%= post.published.strftime('%A, %B %d, %Y') %>: <%= link_to(post.name, post) %></li>
+    <% end %>
+  <% end %>
+</ul>
+<p><%= link_to('Edit', edit_blog_path) %></p>

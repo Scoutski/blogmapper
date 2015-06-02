@@ -8,6 +8,7 @@
 #  category   :string
 #  created_at :datetime
 #  updated_at :datetime
+#  image_url  :text
 #
 
 class Blog < ActiveRecord::Base

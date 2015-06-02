@@ -1,0 +1,28 @@
+<%= form_for @post do |f| %>
+  <p>
+    <%= f.label :name %>
+    <%= f.text_field :name, :autofocus => true %>
+  </p>
+  <p>
+    <%= f.label :published %>
+    <%= f.text_field :published %>
+  </p>
+  <p>
+    <%= f.label :post_url %>
+    <%= f.text_field :post_url %>
+  </p>
+  <p>
+    <%= f.label :restaurant_name %>
+    <%= f.text_field :restaurant_name %>
+  </p>
+  <p>
+    <%= f.label :restaurant_loc %>
+    <%= f.text_field :restaurant_loc %>
+  </p>
+  <p>
+    <%= f.label :blog_id %>
+    <%= f.select :blog_id, Blog.all.map { |blog| [blog.name, blog.id]}, :include_blank => true %>
+  </p>
+    <%= f.label :submit %>
+    <%= f.submit %>
+<% end %>
