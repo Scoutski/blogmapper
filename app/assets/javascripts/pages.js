@@ -84,44 +84,67 @@ $(document).ready(function() {
     };
 
     $('.button-group').each(function(i, buttonGroup) {
+        
         var $buttonGroup = $(buttonGroup);
         $buttonGroup.on('click', 'button', function() {
+            if ($(this).hasClass('is-checked')) {
+                console.log('removing is-checked');
+                $(this).removeClass('is-checked');
+            } else {
+                $('.button').removeClass('is-checked');
+                console.log('adding is-checked');
+                $(this).addClass('is-checked');
+            };
+
             if (slideExists === true) {
-                $('.menu-slider').addClass('classless-div').removeClass('col-md-2').css('margin-top', '0px');
+                var checkOpen = false;
+
+                console.log($(this).attr('data-id') + ' & ' + $('#show-hide').attr('data-rel'));
+
+                if ($(this).attr('data-id') !== $('#show-hide').attr('data-rel')) {
+                    checkOpen = true;
+                };
+
+                $('.menu-slider').addClass('classless-div').removeClass('col-md-2');
                 $('.col-md-8').addClass('col-md-10').removeClass('col-md-8');
                 clearContent();
                 slideExists = false;
+                
+                if (checkOpen) {
+                    $('.menu-slider').addClass('col-md-2').removeClass('classless-div');
+                    $('.col-md-10').addClass('col-md-8').removeClass('col-md-10');
+                    fillContent($(this).attr('data-id'));
+                    slideExists = true;
+                };
             } else {
-                $('.menu-slider').addClass('col-md-2').removeClass('classless-div').css('margin-top', '60px');
+
+                $('.menu-slider').addClass('col-md-2').removeClass('classless-div');
                 $('.col-md-10').addClass('col-md-8').removeClass('col-md-10');
                 fillContent($(this).attr('data-id'));
                 slideExists = true;
+
             };
 
-            if ($(this).hasClass('is-checked')) {
-                $(this).removeClass('is-checked');
-            } else {
-                $(this).addClass('is-checked');
-            };
+
         });
     });
 
-    $('.slide-test').on('click', function() {
-        if (slideExists === false) {
-            // $('.col-md-10').animate({
-            //     left: "+=100"
-            // })
-            $('.menu-slider').addClass('col-md-2').removeClass('classless-div').css('margin-top', '60px');
-            $('.col-md-10').addClass('col-md-8').removeClass('col-md-10');
-            fillContent($(this).attr('data-id'));
-            slideExists = true;
-        } else {
-            $('.menu-slider').addClass('classless-div').removeClass('col-md-2').css('margin-top', '0px');
-            $('.col-md-8').addClass('col-md-10').removeClass('col-md-8');
-            clearContent();
-            slideExists = false;
-        };
-    });
+    // $('.slide-test').on('click', function() {
+    //     if (slideExists === false) {
+    //         // $('.col-md-10').animate({
+    //         //     left: "+=100"
+    //         // })
+    //         $('.menu-slider').addClass('col-md-2').removeClass('classless-div').css('margin-top', '60px');
+    //         $('.col-md-10').addClass('col-md-8').removeClass('col-md-10');
+    //         fillContent($(this).attr('data-id'));
+    //         slideExists = true;
+    //     } else {
+    //         $('.menu-slider').addClass('classless-div').removeClass('col-md-2').css('margin-top', '0px');
+    //         $('.col-md-8').addClass('col-md-10').removeClass('col-md-8');
+    //         clearContent();
+    //         slideExists = false;
+    //     };
+    // });
 
     function findWithAttr(array, attr, value) {
         for (var i = 0; i < array.length; i += 1) {
@@ -138,7 +161,7 @@ $(document).ready(function() {
         } else {
             startPhase = 'Show All';
         };
-        var r = $('<button id="show-hide" class="button">' + startPhase + '</button>');
+        var r = $('<button id="show-hide" class="button" data-rel="' + value + '">' + startPhase + '</button>');
         $(".menu-slider").append(r);
 
         var links = "";
@@ -172,10 +195,12 @@ $(document).ready(function() {
         });
     }
 
-    var clearContent = function() {
-        $(".menu-slider").empty();
-    }
-    initialize();
+var clearContent = function() {
+    $(".menu-slider").empty();
+};
+
+initialize();
+
 });
 
 var infoOpen = function(i) {

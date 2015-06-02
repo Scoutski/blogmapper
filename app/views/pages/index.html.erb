@@ -1,11 +1,9 @@
 <div class="row">
   <div class="col-md-2">
-    <h2>Blog List</h2>
       <div class="button-group filters-button-group">
         <% if @blogs.any? %>
           <% @blogs.each do |blog| %>          
             <button class="button shown" data-id=<%= blog.id %>><%= blog.name %></button>          
-            <!-- <%= link_to(blog.name, blog) %> -->
         <% end %>
       <% end %>
       </div>
