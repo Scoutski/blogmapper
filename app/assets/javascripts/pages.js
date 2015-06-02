@@ -155,6 +155,9 @@ $(document).ready(function() {
     };
 
     var fillContent = function(value) {
+        $(".menu-slider").css('overflow-y', 'scroll');
+        $(".menu-slider").css('height', '600px');
+        $(".menu-slider").css("padding-top", "10px");
         var startPhase;
         if ($('button[data-id="' + value + '"]').hasClass('shown')) {
             startPhase = 'Hide All';
@@ -196,6 +199,9 @@ $(document).ready(function() {
     }
 
 var clearContent = function() {
+    $(".menu-slider").css("height", "");
+    $(".menu-slider").css("overflow-y", "");
+    $(".menu-slider").css("padding-top", "");
     $(".menu-slider").empty();
 };
 
