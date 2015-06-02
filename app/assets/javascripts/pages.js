@@ -86,21 +86,22 @@ $(document).ready(function() {
     $('.button-group').each(function(i, buttonGroup) {
         var $buttonGroup = $(buttonGroup);
         $buttonGroup.on('click', 'button', function() {
+            if (slideExists === true) {
+                $('.menu-slider').addClass('classless-div').removeClass('col-md-2').css('margin-top', '0px');
+                $('.col-md-8').addClass('col-md-10').removeClass('col-md-8');
+                clearContent();
+                slideExists = false;
+            } else {
+                $('.menu-slider').addClass('col-md-2').removeClass('classless-div').css('margin-top', '60px');
+                $('.col-md-10').addClass('col-md-8').removeClass('col-md-10');
+                fillContent($(this).attr('data-id'));
+                slideExists = true;
+            };
+
             if ($(this).hasClass('is-checked')) {
-                $(this).removeClass('is-checked')
-                for (var i = 0; i < marker_array.length; i++) {
-                    if (marker_array[i].group === $(this).attr('data-id')) {
-                        marker_array[i].setVisible(false);
-                    }
-                }
+                $(this).removeClass('is-checked');
             } else {
                 $(this).addClass('is-checked');
-
-                for (var i = 0; i < marker_array.length; i++) {
-                    if (marker_array[i].group === $(this).attr('data-id')) {
-                        marker_array[i].setVisible(true);
-                    }
-                }
             };
         });
     });
@@ -119,7 +120,6 @@ $(document).ready(function() {
             $('.col-md-8').addClass('col-md-10').removeClass('col-md-8');
             clearContent();
             slideExists = false;
-
         };
     });
 
@@ -132,7 +132,13 @@ $(document).ready(function() {
     };
 
     var fillContent = function(value) {
-        var r = $('<button id="show-hide" class="button">Hide All</button>');
+        var startPhase;
+        if ($('button[data-id="' + value + '"]').hasClass('shown')) {
+            startPhase = 'Hide All';
+        } else {
+            startPhase = 'Show All';
+        };
+        var r = $('<button id="show-hide" class="button">' + startPhase + '</button>');
         $(".menu-slider").append(r);
 
         var links = "";
@@ -146,8 +152,8 @@ $(document).ready(function() {
         $(".menu-slider").append($(links));
 
         $("#show-hide").on('click', function() {
-            if ($('#show-hide').hasClass('shown')) {
-                $('#show-hide').removeClass('shown');
+            if ($('button[data-id="' + value + '"]').hasClass('shown')) {
+                $('button[data-id="' + value + '"]').removeClass('shown');
                 for (var i = 0; i < marker_array.length; i++) {
                     if (marker_array[i].group === value) {
                         marker_array[i].setVisible(false);
@@ -155,7 +161,7 @@ $(document).ready(function() {
                 }
                 $('#show-hide').html('Show All');
             } else {
-                $(this).addClass('shown');
+                $('button[data-id="' + value + '"]').addClass('shown');
                 for (var i = 0; i < marker_array.length; i++) {
                     if (marker_array[i].group === value) {
                         marker_array[i].setVisible(true);
@@ -173,5 +179,5 @@ $(document).ready(function() {
 });
 
 var infoOpen = function(i) {
-        google.maps.event.trigger(marker_array[i],'click');
+    google.maps.event.trigger(marker_array[i], 'click');
 };
