@@ -62,7 +62,13 @@ $(document).ready(function() {
                 gon.posts[i].post_url +
                 '">Original Post: ' +
                 gon.posts[i].name +
-                '</a>';
+                '</a>' +
+                '<br>' +
+                '<form action="/users/' + gon.posts[i].id + '/fav_post" method="post" data-remote="true">' +
+                    '<a href="javascript:;" onclick="parentNode.submit();">Favorite</a>' +
+                    '<input type="hidden" name="mess" value="Favorite"/>' +
+                '</form>'; 
+                // '<a data-remote="true" href="/users/' + gon.posts[i].id + '/fav_post" method="post">Favorite</a>';
 
             infowindow = new google.maps.InfoWindow();
 

@@ -37,7 +37,7 @@ class BlogsController < ApplicationController
 
   private
     def blog_params
-      params.require(:blog).permit(:name, :blog_url, :image_url, :marker_url, :category)
+      params.require(:blog).permit(:name, :blog_url, :marker_url)
     end
 
     def check_if_admin

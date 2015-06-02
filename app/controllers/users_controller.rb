@@ -1,6 +1,11 @@
 class UsersController < ApplicationController
-  
   before_action :check_if_admin, :only => [:index]
+  respond_to :html, :js
+
+  # protect_from_forgery with: :exception
+  skip_before_filter :verify_authenticity_token, :only => [:fav_post]
+
+
   def index
     @users = User.all
   end
@@ -28,9 +33,26 @@ class UsersController < ApplicationController
     redirect_to root_path
   end
 
+  def fav_post
+    binding.pry
+    id = params[:id].to_i
+
+    if @current_user.fav_posts.nil?
+      @current_user.fav_posts.push(id)
+    else
+      @current_user.fav_posts.select { |post| post.id === id }
+    end
+
+
+    respond_to do |format|
+      format.html
+      format.json
+    end
+  end
+
     private
   def user_params
-    params.require(:user).permit(:name, :password, :password_confirmation)
+    params.require(:user).permit(:name, :password, :password_confirmation, :id)
   end
 
   def check_if_admin

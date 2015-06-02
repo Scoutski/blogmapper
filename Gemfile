@@ -36,6 +36,7 @@ gem 'autoprefixer-rails'
 gem 'cloudinary'
 gem 'gon'
 gem 'geocoder'
+gem 'responders', '~> 2.0'
 
 group :development do
   gem 'pry-rails'

@@ -5,10 +5,8 @@
 #  id         :integer          not null, primary key
 #  name       :string
 #  blog_url   :text
-#  category   :string
 #  created_at :datetime
 #  updated_at :datetime
-#  image_url  :text
 #  marker_url :text
 #
 

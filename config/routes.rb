@@ -29,6 +29,8 @@ Rails.application.routes.draw do
   post '/login' => 'session#create'
   delete '/login' => 'session#destroy'
 
+  post '/users/:id/fav_post' => 'users#fav_post'
+
   resources :blogs
   resources :posts
 

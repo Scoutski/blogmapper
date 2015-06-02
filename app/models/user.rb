@@ -8,6 +8,8 @@
 #  admin           :boolean          default(FALSE)
 #  created_at      :datetime
 #  updated_at      :datetime
+#  fav_posts       :integer          is an Array
+#  fav_blogs       :integer          is an Array
 #
 
 class User < ActiveRecord::Base
