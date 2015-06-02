@@ -1,4 +1,6 @@
 class PostsController < ApplicationController
+  
+  before_action :check_if_admin, :only => [:new, :edit]
   def index
     @posts = Post.all
   end
@@ -42,5 +44,9 @@ class PostsController < ApplicationController
   private
     def post_params
       params.require(:post).permit(:name, :published, :post_url, :restaurant_name, :restaurant_loc, :blog_id)
+    end
+
+    def check_if_admin
+      redirect_to root_path unless @current_user.present? && @current_user.admin?
     end
 end

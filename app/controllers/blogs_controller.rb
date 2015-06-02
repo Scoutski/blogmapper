@@ -1,4 +1,6 @@
 class BlogsController < ApplicationController
+  
+  before_action :check_if_admin, :only => [:new, :edit]
   def index
     @blogs = Blog.all
   end
@@ -36,5 +38,9 @@ class BlogsController < ApplicationController
   private
     def blog_params
       params.require(:blog).permit(:name, :blog_url, :image_url, :marker_url, :category)
+    end
+
+    def check_if_admin
+      redirect_to root_path unless @current_user.present? && @current_user.admin?
     end
 end
