@@ -21,6 +21,8 @@ Rails.application.routes.draw do
   post '/login' => 'session#create'
   delete '/login' => 'session#destroy'
 
+  resources :blogs
+
   resources :users, :except => [:edit, :show] do # except has to be an array
     collection do
       get '/edit' => 'users#edit'

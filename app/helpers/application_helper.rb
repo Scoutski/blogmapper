@@ -1,5 +1,13 @@
 module ApplicationHelper
-  def intellinav
+  def intellinav_left
+    nav = ''
+    if @current_user.present?
+      nav+= '<li>' + link_to('Blogs', blogs_path) + '</li>'
+    end
+    nav
+  end
+
+  def intellinav_right
     nav = ''
     if @current_user.present? && @current_user.admin?
       nav+= '<li>' + link_to('Show users', users_path) + '</li>'
@@ -13,4 +21,6 @@ module ApplicationHelper
     end
     nav
   end
+
+  
 end
