@@ -4,11 +4,13 @@
       <div class="button-group filters-button-group">
         <% if @blogs.any? %>
           <% @blogs.each do |blog| %>          
-            <button class="button is-checked" data-id=<%= blog.id %>><%= blog.name %></button>          
+            <button class="button shown" data-id=<%= blog.id %>><%= blog.name %></button>          
             <!-- <%= link_to(blog.name, blog) %> -->
         <% end %>
       <% end %>
+      <button class="button slide-test" data-id="1">Slide Test</button>
       </div>
   </div>
-  <div class="col-md-10"><div id="map-canvas"></div></div>
+  <div class="menu-slider anim classless-div"></div>
+  <div class="anim col-md-10"><div id="map-canvas"></div></div>
 </div>

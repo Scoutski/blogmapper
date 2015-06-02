@@ -1,6 +1,8 @@
+var slideExists = false;
+var marker_array = [];
+var prev_infowindow = false;
+
 $(document).ready(function() {
-    var marker_array = [];
-    var prev_infowindow = false;
     for (var h = 0; h < gon.blogs.length; h++) {
 
     };
@@ -30,7 +32,7 @@ $(document).ready(function() {
                     break;
                 };
             };
-            
+
             var myLatLng = new google.maps.LatLng(gon.posts[i].latitude, gon.posts[i].longitude);
 
             var temp = relatedBlog.id + "";
@@ -42,7 +44,8 @@ $(document).ready(function() {
                 clickable: true,
                 icon: image,
                 visible: true,
-                group: temp
+                group: temp,
+                infoRel: gon.posts[i].name
             });
 
             marker_array.push(marker);
@@ -86,21 +89,89 @@ $(document).ready(function() {
             if ($(this).hasClass('is-checked')) {
                 $(this).removeClass('is-checked')
                 for (var i = 0; i < marker_array.length; i++) {
-                    if (marker_array[i].group == $(this).attr('data-id')) {
+                    if (marker_array[i].group === $(this).attr('data-id')) {
                         marker_array[i].setVisible(false);
                     }
                 }
             } else {
-                $(this).addClass('is-checked');    
+                $(this).addClass('is-checked');
 
                 for (var i = 0; i < marker_array.length; i++) {
-                    if (marker_array[i].group == $(this).attr('data-id')) {
+                    if (marker_array[i].group === $(this).attr('data-id')) {
                         marker_array[i].setVisible(true);
                     }
                 }
-            };            
+            };
         });
     });
 
+    $('.slide-test').on('click', function() {
+        if (slideExists === false) {
+            // $('.col-md-10').animate({
+            //     left: "+=100"
+            // })
+            $('.menu-slider').addClass('col-md-2').removeClass('classless-div').css('margin-top', '60px');
+            $('.col-md-10').addClass('col-md-8').removeClass('col-md-10');
+            fillContent($(this).attr('data-id'));
+            slideExists = true;
+        } else {
+            $('.menu-slider').addClass('classless-div').removeClass('col-md-2').css('margin-top', '0px');
+            $('.col-md-8').addClass('col-md-10').removeClass('col-md-8');
+            clearContent();
+            slideExists = false;
+
+        };
+    });
+
+    function findWithAttr(array, attr, value) {
+        for (var i = 0; i < array.length; i += 1) {
+            if (array[i][attr] === value) {
+                return i;
+            }
+        }
+    };
+
+    var fillContent = function(value) {
+        var r = $('<button id="show-hide" class="button">Hide All</button>');
+        $(".menu-slider").append(r);
+
+        var links = "";
+        for (var g = 0; g < gon.posts.length; g++) {
+            if (gon.posts[g].blog_id === parseInt(value)) {
+                links += '<b>' + gon.posts[g].published + '</b><br>';
+                var tempNum = findWithAttr(marker_array, 'infoRel', gon.posts[g].name);
+                links += '<a href="javascript:void(0);" onclick="infoOpen(' + "'" + tempNum + "');" + '">' + gon.posts[g].name + '</a><br>';
+            }
+        }
+        $(".menu-slider").append($(links));
+
+        $("#show-hide").on('click', function() {
+            if ($('#show-hide').hasClass('shown')) {
+                $('#show-hide').removeClass('shown');
+                for (var i = 0; i < marker_array.length; i++) {
+                    if (marker_array[i].group === value) {
+                        marker_array[i].setVisible(false);
+                    }
+                }
+                $('#show-hide').html('Show All');
+            } else {
+                $(this).addClass('shown');
+                for (var i = 0; i < marker_array.length; i++) {
+                    if (marker_array[i].group === value) {
+                        marker_array[i].setVisible(true);
+                    }
+                }
+                $('#show-hide').html('Hide All');
+            }
+        });
+    }
+
+    var clearContent = function() {
+        $(".menu-slider").empty();
+    }
     initialize();
 });
+
+var infoOpen = function(i) {
+        google.maps.event.trigger(marker_array[i],'click');
+};
