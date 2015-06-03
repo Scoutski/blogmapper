@@ -30,7 +30,8 @@ Rails.application.routes.draw do
   delete '/login' => 'session#destroy'
 
   post '/users/:id/fav_post' => 'users#fav_post'
-
+  get '/users/:id/fav_posts' => 'users#fav_posts'
+  
   resources :blogs
   resources :posts
 

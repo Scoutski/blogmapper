@@ -65,21 +65,26 @@ $(document).ready(function() {
                 '</a>' +
                 '<br>' +
                 '<form action="/users/' + gon.posts[i].id + '/fav_post" method="post" data-remote="true">' +
-                    '<a href="javascript:;" onclick="parentNode.submit();">Favorite</a>' +
+                    '<a href="javascript:;" class="favorite-link">Favorite</a>' +
                     '<input type="hidden" name="mess" value="Favorite"/>' +
                 '</form>'; 
-                // '<a data-remote="true" href="/users/' + gon.posts[i].id + '/fav_post" method="post">Favorite</a>';
 
             infowindow = new google.maps.InfoWindow();
 
-            google.maps.event.addListener(marker, 'click', getInfoCallback(map, content));
+            google.maps.event.addListener(marker, 'click', getInfoCallback(gon.posts[i].id, map, content));
         };
     };
 
-    function getInfoCallback(map, content) {
+    function getInfoCallback(i, map, content) {
+        
+        $.get('/users/' + i + '/fav_posts/').done(function(data) {
+                console.log(data);
+            });
+
         var infowindow = new google.maps.InfoWindow({
             content: content
         });
+
         return function() {
             if (prev_infowindow) {
                 prev_infowindow.close();
@@ -89,6 +94,13 @@ $(document).ready(function() {
             infowindow.open(map, this);
         };
     };
+
+    $(document).on('click', '.favorite-link', function() {
+        var url = $(this).closest('form').attr('action');
+        $.post(url).done(function () {
+            console.log('successful');
+        });
+    });
 
     $('.button-group').each(function(i, buttonGroup) {
         

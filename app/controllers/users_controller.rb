@@ -33,20 +33,26 @@ class UsersController < ApplicationController
     redirect_to root_path
   end
 
+  def fav_posts
+    id = params[:id].to_i
+
+    render(:text => 'this is some text')
+    end
+
   def fav_post
-    binding.pry
     id = params[:id].to_i
 
     if @current_user.fav_posts.nil?
       @current_user.fav_posts.push(id)
+    elsif (@current_user.fav_posts.select { |post| post === id }.any?)
+        @current_user.fav_posts.delete(id)
     else
-      @current_user.fav_posts.select { |post| post.id === id }
+      @current_user.fav_posts.push(id)
     end
-
+    @current_user.save
 
     respond_to do |format|
-      format.html
-      format.json
+      format.all { render :nothing => true }
     end
   end
 
