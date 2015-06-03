@@ -1,0 +1,20 @@
+<% if (@current_user.fav_posts.select { |post| post === id }.any?) %>
+  <%= image_tag('https://spark.uit.tufts.edu/media/favorite_star.gif') %> 
+<% end %>
+
+<b><%= @post.restaurant_name %></b><br>
+<%= @post.blog.name %><br>
+<%= @post.restaurant_loc %><br>
+<a href="<%= @post.post_url %>">Original Post: <%= @post.name %></a><br>
+<form action="/users/<%= @post.id %>/fav_post" method="post" data-remote="true">
+<a href="#" class="favorite-link">
+
+<% if (@current_user.fav_posts.select { |post| post === id }.any?) %>
+  Unfavorite
+<% else %>
+  Favorite
+<% end %>
+
+</a>
+<input type="hidden" name="mess" value="Favorite"/>
+</form>

@@ -46,64 +46,48 @@ $(document).ready(function() {
                 icon: image,
                 visible: true,
                 group: temp,
-                infoRel: gon.posts[i].name
+                infoRel: gon.posts[i].name,
+                infoPostID: gon.posts[i].id
             });
 
             marker_array.push(marker);
 
-            var content = '<b>' +
-                gon.posts[i].restaurant_name +
-                '</b><br>' +
-                relatedBlog.name +
-                '<br>' +
-                gon.posts[i].restaurant_loc +
-                '<br>' +
-                '<a href="' +
-                gon.posts[i].post_url +
-                '">Original Post: ' +
-                gon.posts[i].name +
-                '</a>' +
-                '<br>' +
-                '<form action="/users/' + gon.posts[i].id + '/fav_post" method="post" data-remote="true">' +
-                    '<a href="javascript:;" class="favorite-link">Favorite</a>' +
-                    '<input type="hidden" name="mess" value="Favorite"/>' +
-                '</form>'; 
-
             infowindow = new google.maps.InfoWindow();
+            google.maps.event.addListener(marker, 'click', function() {
+                var thisMarker = marker_array[marker_array.indexOf(this)];
+                $.get('/users/' + this.infoPostID + '/fav_posts/').done(function(data) {
+                
+                var infowindow = new google.maps.InfoWindow({
+                    content: data
+                });
 
-            google.maps.event.addListener(marker, 'click', getInfoCallback(gon.posts[i].id, map, content));
-        };
-    };
-
-    function getInfoCallback(i, map, content) {
-        
-        $.get('/users/' + i + '/fav_posts/').done(function(data) {
-                console.log(data);
+                if (prev_infowindow) {
+                    prev_infowindow.close();
+                };
+                prev_infowindow = infowindow;
+                infowindow.setContent(data);
+                infowindow.open(map, thisMarker);
+                });
             });
-
-        var infowindow = new google.maps.InfoWindow({
-            content: content
-        });
-
-        return function() {
-            if (prev_infowindow) {
-                prev_infowindow.close();
-            };
-            prev_infowindow = infowindow;
-            infowindow.setContent(content);
-            infowindow.open(map, this);
         };
     };
 
     $(document).on('click', '.favorite-link', function() {
+        if ($(this).html() === 'Favorite') {
+            $(this).html('Unfavorite');
+            $('.favorite-title').html('<img src="https://spark.uit.tufts.edu/media/favorite_star.gif" alt="Favorite star">');
+        } else {
+            $(this).html('Favorite');
+            $('.favorite-title').html('');
+        };
+
         var url = $(this).closest('form').attr('action');
-        $.post(url).done(function () {
-            console.log('successful');
+        $.post(url).done(function() {
         });
     });
 
     $('.button-group').each(function(i, buttonGroup) {
-        
+
         var $buttonGroup = $(buttonGroup);
         $buttonGroup.on('click', 'button', function() {
             if ($(this).hasClass('is-checked')) {
@@ -128,7 +112,7 @@ $(document).ready(function() {
                 $('.col-md-8').addClass('col-md-10').removeClass('col-md-8');
                 clearContent();
                 slideExists = false;
-                
+
                 if (checkOpen) {
                     $('.menu-slider').addClass('col-md-2').removeClass('classless-div');
                     $('.col-md-10').addClass('col-md-8').removeClass('col-md-10');
@@ -217,14 +201,14 @@ $(document).ready(function() {
         });
     }
 
-var clearContent = function() {
-    $(".menu-slider").css("height", "");
-    $(".menu-slider").css("overflow-y", "");
-    $(".menu-slider").css("padding-top", "");
-    $(".menu-slider").empty();
-};
+    var clearContent = function() {
+        $(".menu-slider").css("height", "");
+        $(".menu-slider").css("overflow-y", "");
+        $(".menu-slider").css("padding-top", "");
+        $(".menu-slider").empty();
+    };
 
-initialize();
+    initialize();
 
 });
 

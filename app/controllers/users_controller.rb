@@ -34,9 +34,8 @@ class UsersController < ApplicationController
   end
 
   def fav_posts
-    id = params[:id].to_i
-
-    render(:text => 'this is some text')
+    @post = Post.find params[:id].to_i
+    render :layout => false
     end
 
   def fav_post

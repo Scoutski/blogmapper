@@ -25,13 +25,16 @@
 Rails.application.routes.draw do
   root 'pages#index'
 
+  get '/pages/test' => 'pages#test'
+  get '/pages/test2' => 'pages#test2'
+
   get '/login' => 'session#new'
   post '/login' => 'session#create'
   delete '/login' => 'session#destroy'
 
   post '/users/:id/fav_post' => 'users#fav_post'
   get '/users/:id/fav_posts' => 'users#fav_posts'
-  
+
   resources :blogs
   resources :posts
 

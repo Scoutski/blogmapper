@@ -1,0 +1,8 @@
+<b><%= @post.restaurant_name %></b><br>
+<%= @post.blog.name %><br>
+<%= @post.restaurant_loc %><br>
+<a href="<%= @post.post_url %>">Original Post: <%= @post.name %></a><br>
+<form action="/users/<%= @post.id %>/fav_post" method="post" data-remote="true">
+<a href="#" class="favorite-link">Favorite</a>
+<input type="hidden" name="mess" value="Favorite"/>
+</form>
