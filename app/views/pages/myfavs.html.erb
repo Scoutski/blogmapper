@@ -1,0 +1,13 @@
+<div class="row">
+  <div class="col-md-2" style="padding-top: 10px; overflow-y: scroll;">
+      <div class="button-group">
+        <% if @user.fav_posts.any? %>
+          <% @user.fav_posts.each do |post| %>
+            <b><%= @posts.find(post).published %></b><br>
+            <p><%= link_to(@posts.find(post).name, @posts.find(post).post_url) %></p>
+        <% end %>
+      <% end %>
+      </div>
+  </div>
+  <div class="anim col-md-10"><div id="map-canvas" class="my-favs-map"></div></div>
+</div>

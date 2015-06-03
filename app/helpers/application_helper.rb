@@ -1,8 +1,9 @@
 module ApplicationHelper
   def intellinav_left
     nav = ''
-    if @current_user.present? && @current_user.admin?
-      nav+= '<li>' + link_to('Blogs', blogs_path) + '</li>'
+    if @current_user.present?
+      nav+= '<li>' + link_to('My Blogs', myblogs_path) + '</li>'
+      nav+= '<li>' + link_to('My Favorites', myfavs_path) + '</li>'
     end
     nav
   end
@@ -11,6 +12,7 @@ module ApplicationHelper
     nav = ''
     if @current_user.present? && @current_user.admin?
       nav+= '<li>' + link_to('Show users', users_path) + '</li>'
+      nav+= '<li>' + link_to('Show Blogs', blogs_path) + '</li>'
     end
     if @current_user.present?
       nav += '<li>' + link_to("Edit profile", edit_users_path)
