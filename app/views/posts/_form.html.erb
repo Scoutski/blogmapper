@@ -21,7 +21,7 @@
   </p>
   <p>
     <%= f.label :blog_id %>
-    <%= f.select :blog_id, Blog.all.map { |blog| [blog.name, blog.id]}, :include_blank => true %>
+    <%= f.select :blog_id, Blog.all.map { |blog| [blog.name, blog.id]}%>
   </p>
     <%= f.label :submit %>
     <%= f.submit %>

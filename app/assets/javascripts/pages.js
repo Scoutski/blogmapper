@@ -5,14 +5,14 @@ var map;
 
 $(document).ready(function() {
     if ($('#map-canvas').length === 0) {
-            return;
+        return;
     }
     for (var h = 0; h < gon.blogs.length; h++) {
 
     };
 
     function initialize() {
-        
+
         var mapCanvas = document.getElementById('map-canvas');
         var mapOptions = {
             center: new google.maps.LatLng(-33.8702543, 151.2063811),
@@ -27,7 +27,7 @@ $(document).ready(function() {
         for (var i = 0; i < gon.posts.length; i++) {
             var relatedBlog;
             var stop = false;
-            
+
             if (typeof gon.user !== 'undefined') {
                 if ((gon.user.fav_posts.indexOf(gon.posts[i].id) === -1) && ($('.my-favs-map').length > 0)) {
                     stop = true;
@@ -93,7 +93,7 @@ $(document).ready(function() {
     $(document).on('click', '.favorite-link', function() {
         if ($(this).html() === 'Favorite') {
             $(this).html('Unfavorite');
-            $('.favorite-title').html('<img src="https://spark.uit.tufts.edu/media/favorite_star.gif" alt="Favorite star">');
+            $('.favorite-title').html('<img src="/assets/star.gif" alt="Favorite star">');
         } else {
             $(this).html('Favorite');
             $('.favorite-title').html('');
@@ -158,46 +158,70 @@ $(document).ready(function() {
         $(".menu-slider").css('height', '600px');
         $(".menu-slider").css("padding-top", "10px");
 
-        var startPhase;
+        var startShowPhase;
         if ($('button[data-id="' + value + '"]').hasClass('shown')) {
-            startPhase = 'Hide All';
+            startShowPhase = 'Hide All';
         } else {
-            startPhase = 'Show All';
+            startShowPhase = 'Show All';
         };
 
-        var r = $('<button id="show-hide" class="button" data-rel="' + value + '">' + startPhase + '</button>');
-        $(".menu-slider").append(r);
 
-        var links = "";
-        for (var g = 0; g < gon.posts.length; g++) {
-            if (gon.posts[g].blog_id === parseInt(value)) {
-                links += '<b>' + gon.posts[g].published + '</b><br>';
-                var tempNum = findWithAttr(marker_array, 'infoRel', gon.posts[g].name);
-                links += '<a href="javascript:void(0);" onclick="infoOpen(' + "'" + tempNum + "');" + '">' + gon.posts[g].name + '</a><br>';
-            }
-        }
-        $(".menu-slider").append($(links));
+        $.get('/blogs/' + value + '/favorite/').done(function(data) {
+            var favoriteBlogButton = $('<button id="favorite-blog" class="button">' + data + '</button>');
+            $(".menu-slider").append(favoriteBlogButton);
 
-        $("#show-hide").on('click', function() {
-            if ($('button[data-id="' + value + '"]').hasClass('shown')) {
-                $('button[data-id="' + value + '"]').removeClass('shown');
-                for (var i = 0; i < marker_array.length; i++) {
-                    if (marker_array[i].group === value) {
-                        marker_array[i].setVisible(false);
-                    }
+            var showHideButton = $('<button id="show-hide" class="button" data-rel="' + value + '">' + startShowPhase + '</button>');
+            $(".menu-slider").append(showHideButton);
+
+            var links = "";
+            for (var g = 0; g < gon.posts.length; g++) {
+                if (gon.posts[g].blog_id === parseInt(value)) {
+                    links += '<b>' + gon.posts[g].published + '</b><br>';
+                    var tempNum = findWithAttr(marker_array, 'infoRel', gon.posts[g].name);
+                    links += '<a href="javascript:void(0);" onclick="infoOpen(' + "'" + tempNum + "');" + '">' + gon.posts[g].name + '</a><br>';
                 }
-                $('#show-hide').html('Show All');
-            } else {
-                $('button[data-id="' + value + '"]').addClass('shown');
-                for (var i = 0; i < marker_array.length; i++) {
-                    if (marker_array[i].group === value) {
-                        marker_array[i].setVisible(true);
-                    }
-                }
-                $('#show-hide').html('Hide All');
             }
+            $(".menu-slider").append($(links));
+
+            if (data !== 'Sign Up To Follow') {
+                // This is a bit of a cheaty way to check if a user is logged in.
+
+                $("#favorite-blog").on('click', function() {
+                    setFavBlogName();
+                    
+                });
+            }
+
+            $("#show-hide").on('click', function() {
+                if ($('button[data-id="' + value + '"]').hasClass('shown')) {
+                    $('button[data-id="' + value + '"]').removeClass('shown');
+                    for (var i = 0; i < marker_array.length; i++) {
+                        if (marker_array[i].group === value) {
+                            marker_array[i].setVisible(false);
+                        }
+                    }
+                    $('#show-hide').html('Show All');
+                } else {
+                    $('button[data-id="' + value + '"]').addClass('shown');
+                    for (var i = 0; i < marker_array.length; i++) {
+                        if (marker_array[i].group === value) {
+                            marker_array[i].setVisible(true);
+                        }
+                    }
+                    $('#show-hide').html('Hide All');
+                }
+            });
         });
     }
+
+    var setFavBlogName = function() {
+        // This function runs after a user has logged in to set the correct name on the button.
+        if ($('#favorite-blog').html() === "Follow Blog") {
+            $('#favorite-blog').html("Unfollow Blog");
+        } else {
+            $('#favorite-blog').html("Follow Blog");
+        };
+    };
 
     var clearContent = function() {
         $(".menu-slider").css("height", "");
@@ -211,6 +235,5 @@ $(document).ready(function() {
 });
 
 var infoOpen = function(i) {
-  google.maps.event.trigger(marker_array[i], 'click');
+    google.maps.event.trigger(marker_array[i], 'click');
 };
-

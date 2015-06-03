@@ -16,7 +16,7 @@ class PagesController < ApplicationController
   def myfavs
     @user = @current_user
     @blogs = Blog.all
-    @posts = Post.all
+    @posts = Post.order("published ASC")
     gon.user = @current_user
     gon.blogs = Blog.all
     gon.posts = Post.all

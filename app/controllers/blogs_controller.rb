@@ -32,6 +32,22 @@ class BlogsController < ApplicationController
     redirect_to root_path
   end
 
+  def favorite
+    id = params[:id]
+    if @current_user
+      if @current_user.fav_blogs.index(id).nil?
+        result = 'Follow Blog'
+      else
+        result = 'Unfollow Blog'
+      end 
+    else
+      result = 'Sign Up To Follow'
+    end
+    respond_to do |format|
+      format.all { render :text => result }
+    end
+  end
+
   def destroy
   end
 

@@ -1,7 +1,5 @@
-
-
 <b class='favorite-title'><% if (@current_user.fav_posts.select { |post| post === @post.id }.any?) %>
-  <%= image_tag('https://spark.uit.tufts.edu/media/favorite_star.gif') %> 
+  <%= image_tag('star.gif') %> 
 <% end %></b>
 <b><%= @post.restaurant_name %></b><br>
 <%= @post.blog.name %><br>

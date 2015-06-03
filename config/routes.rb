@@ -44,6 +44,8 @@ Rails.application.routes.draw do
   post '/login' => 'session#create'
   delete '/login' => 'session#destroy'
 
+  get '/blogs/:id/favorite/' => 'blogs#favorite'
+
   post '/users/:id/fav_post' => 'users#fav_post'
   get '/users/:id/fav_posts' => 'users#fav_posts'
 
