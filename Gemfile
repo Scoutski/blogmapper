@@ -37,6 +37,7 @@ gem 'cloudinary'
 gem 'gon'
 gem 'geocoder'
 gem 'responders', '~> 2.0'
+gem 'seed_dump'
 
 group :development do
   gem 'pry-rails'
