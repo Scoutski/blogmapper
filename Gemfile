@@ -35,6 +35,7 @@ gem 'bootstrap-sass', '~> 3.3.1'
 gem 'autoprefixer-rails'
 gem 'gon'
 gem 'geocoder'
+gem 'cloudinary'
 gem 'responders', '~> 2.0'
 gem 'seed_dump'
 
