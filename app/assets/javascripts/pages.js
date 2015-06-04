@@ -327,23 +327,27 @@ $(document).ready(function() {
         $("#show-hide").on('click', function() {
             if ($('button[data-id="' + blogID + '"]').hasClass('shown')) {
                 $('button[data-id="' + blogID + '"]').removeClass('shown');
-                for (var i = 0; i < marker_array.length; i++) {
-                    if (marker_array[i].group === blogID) {
-                        marker_array[i].setVisible(false);
-                    }
-                }
+                toggleMarkerVisibility(blogID, false);
+
                 $('#show-hide').html('Show All');
             } else {
                 $('button[data-id="' + blogID + '"]').addClass('shown');
-                for (var i = 0; i < marker_array.length; i++) {
-                    if (marker_array[i].group === blogID) {
-                        marker_array[i].setVisible(true);
-                    }
-                }
+                toggleMarkerVisibility(blogID, true);
+
                 $('#show-hide').html('Hide All');
-            }
+            };
         });
-    }
+    };
+
+    var toggleMarkerVisibility = function(blogID, visibility) {
+        // Function Purpose:
+        // This function either shows or hides the markers for the currently selected blog.
+        for (var i = 0; i < marker_array.length; i++) {
+            if (marker_array[i].group === blogID) {
+                marker_array[i].setVisible(visibility);
+            };
+        };
+    };
 
     createMap();
     initializeMarkers();
