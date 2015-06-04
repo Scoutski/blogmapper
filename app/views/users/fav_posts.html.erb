@@ -1,7 +1,7 @@
 <b class='favorite-title'>
 <% if @current_user %>
   <% if (@current_user.fav_posts.select { |post| post === @post.id }.any?) %>
-    <%= image_tag('star.gif') %> 
+    <%= image_tag('https://cdn2.iconfinder.com/data/icons/diagona/icon/16/031.png') %> 
   <% end %>
 <% end %>
 </b>

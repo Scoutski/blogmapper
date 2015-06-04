@@ -168,7 +168,7 @@ $(document).ready(function() {
         // Changes the state of the info window after clicking on the favorite or unfavorite link.
         if (link.html() === 'Favorite') {
             link.html('Unfavorite');
-            $('.favorite-title').html('<img src="/assets/star.gif" alt="Favorite star">');
+            $('.favorite-title').html('<img src="https://cdn2.iconfinder.com/data/icons/diagona/icon/16/031.png" alt="Favorite star">');
         } else {
             link.html('Favorite');
             $('.favorite-title').html('');
