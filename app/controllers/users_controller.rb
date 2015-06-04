@@ -3,7 +3,7 @@ class UsersController < ApplicationController
   respond_to :html, :js
 
   # protect_from_forgery with: :exception
-  skip_before_filter :verify_authenticity_token, :only => [:fav_post]
+  skip_before_filter :verify_authenticity_token, :only => [:fav_post, :fav_blog]
 
 
   def index
@@ -41,12 +41,29 @@ class UsersController < ApplicationController
   def fav_post
     id = params[:id].to_i
 
-    if @current_user.fav_posts.nil?
-      @current_user.fav_posts.push(id)
-    elsif (@current_user.fav_posts.select { |post| post === id }.any?)
-        @current_user.fav_posts.delete(id)
+    # if @current_user.fav_posts.nil?
+    #   @current_user.fav_posts.push(id)
+    # if (@current_user.fav_posts.select { |post| post === id }.any?)
+    #     @current_user.fav_posts.delete(id)
+    # else
+    #   @current_user.fav_posts.push(id)
+    # end
+    # @current_user.save
+
+    respond_to do |format|
+      format.all { render :nothing => true }
+    end
+  end
+
+  def fav_blog
+    id = params[:id].to_i
+
+    # if @current_user.fav_blogs.nil?
+    #   @current_user.fav_blogs.push(id)
+    if (@current_user.fav_blogs.select { |blog| blog === id }.any?)
+      @current_user.fav_blogs.delete(id)
     else
-      @current_user.fav_posts.push(id)
+      @current_user.fav_blogs.push(id)
     end
     @current_user.save
 
@@ -54,6 +71,7 @@ class UsersController < ApplicationController
       format.all { render :nothing => true }
     end
   end
+
 
     private
   def user_params

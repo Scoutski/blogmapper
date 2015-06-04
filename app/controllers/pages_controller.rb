@@ -1,8 +1,10 @@
 class PagesController < ApplicationController
   def index
+    gon.user = @current_user
     gon.blogs = Blog.all
     gon.posts = Post.all
     @blogs = Blog.all
+    @user = User.all
   end
 
   def myblogs

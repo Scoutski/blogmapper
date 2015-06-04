@@ -1,9 +1,12 @@
+// To make commenting easier to understand, a comment will apply to the code that exists beneath it.
+
 var slideExists = false;
 var marker_array = [];
 var prev_infowindow = false;
 var map;
 
 $(document).ready(function() {
+    // This if statement is used to ensure that there is a #map-canvas on the page (there are 3 pages which use this)
     if ($('#map-canvas').length === 0) {
         return;
     }
@@ -15,7 +18,7 @@ $(document).ready(function() {
 
         var mapCanvas = document.getElementById('map-canvas');
         var mapOptions = {
-            center: new google.maps.LatLng(-33.8702543, 151.2063811),
+            center: new google.maps.LatLng(-33.8752213, 151.1361061),
             zoom: 12,
             mapTypeId: google.maps.MapTypeId.ROADMAP
         }
@@ -28,7 +31,9 @@ $(document).ready(function() {
             var relatedBlog;
             var stop = false;
 
+            //This condition just checks that there is a user logged in.
             if (typeof gon.user !== 'undefined') {
+                // If a user is logged in, this next check is used to skip putting a post marker on the map if the user is on the my favorites page.
                 if ((gon.user.fav_posts.indexOf(gon.posts[i].id) === -1) && ($('.my-favs-map').length > 0)) {
                     stop = true;
                 };
@@ -56,6 +61,8 @@ $(document).ready(function() {
 
             var temp = relatedBlog.id + "";
 
+
+            // This creates the marker object that will be stored in the global marker_array.
             var marker = new google.maps.Marker({
                 position: myLatLng,
                 map: map,
@@ -67,10 +74,10 @@ $(document).ready(function() {
                 infoRel: gon.posts[i].name,
                 infoPostID: gon.posts[i].id
             });
-
             marker_array.push(marker);
 
             infowindow = new google.maps.InfoWindow();
+
             google.maps.event.addListener(marker, 'click', function() {
                 var thisMarker = marker_array[marker_array.indexOf(this)];
                 $.get('/users/' + this.infoPostID + '/fav_posts/').done(function(data) {
@@ -101,6 +108,21 @@ $(document).ready(function() {
 
         var url = $(this).closest('form').attr('action');
         $.post(url).done(function() {});
+    });
+
+    var setFavBlogName = function() {
+        // This function runs after a user has logged in to set the correct name on the button.
+        if ($('#favorite-blog').html() === "Follow Blog") {
+            $('#favorite-blog').html("Unfollow Blog");
+        } else {
+            $('#favorite-blog').html("Follow Blog");
+        };
+    };
+
+    $(document).on('click', '.menu-slider #favorite-blog', function() {
+        setFavBlogName();
+        var url = $(this).closest('form').attr('action');
+        // $.post(url).done(function() {});
     });
 
     $('.button-group').each(function(i, buttonGroup) {
@@ -138,7 +160,6 @@ $(document).ready(function() {
                 $('.col-md-10').addClass('col-md-8').removeClass('col-md-10');
                 fillContent($(this).attr('data-id'));
                 slideExists = true;
-
             };
 
 
@@ -167,11 +188,12 @@ $(document).ready(function() {
 
 
         $.get('/blogs/' + value + '/favorite/').done(function(data) {
-            var favoriteBlogButton = $('<button id="favorite-blog" class="button">' + data + '</button>');
-            $(".menu-slider").append(favoriteBlogButton);
+            var $favoriteBlogButton = $('<form action="/users/' + value + '/fav_blog" method="post" data-remote="true"><button id="favorite-blog" class="button">' + data + '</button></form>');
+            // <input type="hidden" name="mess" value="Favorite">
+            $(".menu-slider").append($favoriteBlogButton);
 
-            var showHideButton = $('<button id="show-hide" class="button" data-rel="' + value + '">' + startShowPhase + '</button>');
-            $(".menu-slider").append(showHideButton);
+            var $showHideButton = $('<button id="show-hide" class="button" data-rel="' + value + '">' + startShowPhase + '</button>');
+            $(".menu-slider").append($showHideButton);
 
             var links = "";
             for (var g = 0; g < gon.posts.length; g++) {
@@ -182,15 +204,6 @@ $(document).ready(function() {
                 }
             }
             $(".menu-slider").append($(links));
-
-            if (data !== 'Sign Up To Follow') {
-                // This is a bit of a cheaty way to check if a user is logged in.
-
-                $("#favorite-blog").on('click', function() {
-                    setFavBlogName();
-                    
-                });
-            }
 
             $("#show-hide").on('click', function() {
                 if ($('button[data-id="' + value + '"]').hasClass('shown')) {
@@ -214,16 +227,11 @@ $(document).ready(function() {
         });
     }
 
-    var setFavBlogName = function() {
-        // This function runs after a user has logged in to set the correct name on the button.
-        if ($('#favorite-blog').html() === "Follow Blog") {
-            $('#favorite-blog').html("Unfollow Blog");
-        } else {
-            $('#favorite-blog').html("Follow Blog");
-        };
-    };
+
 
     var clearContent = function() {
+        // This function removes all the CSS properties for the slide out menu and then empty is used to delete all the buttons and list of links.
+        $("#favorite-blog").off();
         $(".menu-slider").css("height", "");
         $(".menu-slider").css("overflow-y", "");
         $(".menu-slider").css("padding-top", "");

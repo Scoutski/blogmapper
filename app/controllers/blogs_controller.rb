@@ -33,7 +33,8 @@ class BlogsController < ApplicationController
   end
 
   def favorite
-    id = params[:id]
+    id = params[:id].to_i
+
     if @current_user
       if @current_user.fav_blogs.index(id).nil?
         result = 'Follow Blog'
