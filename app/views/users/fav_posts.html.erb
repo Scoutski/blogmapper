@@ -9,7 +9,7 @@
 <%= @post.blog.name %><br>
 <%= @post.restaurant_loc %><br>
 <a href='<%= @post.post_url %>' target="_blank">Original Post: <%= @post.name %></a><br>
-<form action='/users/<%= @post.id %>/fav_post' method='post' data-remote='true'>
+<form action='/users/<%= @post.id %>/fav_post' method='post' data-remote='true' class="favorite-link-form">
 <a href='#' class='favorite-link'><% if @current_user %><% if (@current_user.fav_posts.select { |post| post === @post.id }.any?) %>Unfavorite<% else %>Favorite<% end %><% end %></a>
 <input type='hidden' name='mess' value='Favorite'/>
 </form>
