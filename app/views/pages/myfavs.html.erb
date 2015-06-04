@@ -4,7 +4,7 @@
         <% if @user.fav_posts.any? %>
           <% @user.fav_posts.each do |post| %>
             <b><%= @posts.find(post).published %></b><br>
-            <p><%= link_to(@posts.find(post).name, @posts.find(post).post_url) %></p>
+            <p><%= link_to(@posts.find(post).name, @posts.find(post).post_url, target: "_blank") %></p>
         <% end %>
       <% end %>
       </div>

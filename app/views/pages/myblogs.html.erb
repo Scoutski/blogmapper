@@ -3,7 +3,7 @@
       <div class="button-group">
         <% if @user.fav_blogs.any? %>
           <% @user.fav_blogs.each do |blog| %>          
-            <button class="button shown" data-id=<%= blog %>><%= @blogs.find(blog).name %></button>          
+            <button class="button shown blog-button" data-id=<%= blog %>><%= @blogs.find(blog).name %></button>          
         <% end %>
       <% end %>
       </div>

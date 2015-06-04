@@ -1,6 +1,3 @@
-// To make commenting easier to understand, a comment will apply to the code that exists beneath it.
-
-var slideExists = false;
 var marker_array = [];
 var prev_infowindow = false;
 var map;
@@ -11,76 +8,35 @@ $(document).ready(function() {
         return;
     }
 
-    function initialize() {
-        // Function Purpose:
-        // This function sets up the map and drops the markers.
+    var image;
+    var relatedBlog;
+    var slideExists = false;
 
+    var createMap = function() {
+        // Function Purpose:
+        // This function puts the map on the page with the settings defined in initialMapSettings().
         var mapCanvas = document.getElementById('map-canvas');
         var mapOptions = initialMapSettings();
         map = new google.maps.Map(mapCanvas, mapOptions);
-        var infowindow;
+    };
 
+    var initializeMarkers = function() {
+        // Function Purpose:
+        // This function sets up the map and drops the markers.
         for (var i = 0; i < gon.posts.length; i++) {
-            // This stop variable is a flag that exists to tell the initialize function to not drop a pin on the map.
-            var stop = true;
 
-            for (var j = 0; j < gon.blogs.length; j++) {
-                
-                if (!onFavoriteMap() && !blogButtonExists(gon.blogs[j].id)) {
-                    // This exists so that if the post doesn't have a blog_id of one of the buttons on the page for the My Blogs page, it doesn't assign the marker to the page.
-                    continue;
-                };
-
-                if (gon.blogs[j].id === gon.posts[i].blog_id) {
-                    var image = markerImageSettings(j);
-                    var relatedBlog = gon.blogs[j];
-                    stop = false;
-                    break;
-                };
-            };
+            var skipMarker = shouldMarkerExist(i);
 
             if (onFavoriteMap() && notUserFavorite(i)) {
-                stop = true;
+                skipMarker = true;
             }
-
-            if (stop === true) {
+            if (skipMarker === true) {
                 continue;
             }
 
-            var myLatLng = new google.maps.LatLng(gon.posts[i].latitude, gon.posts[i].longitude);
-
-            // This creates the marker object that will be stored in the global marker_array.
-            var marker = new google.maps.Marker({
-                position: myLatLng,
-                map: map,
-                animation: google.maps.Animation.DROP,
-                clickable: true,
-                icon: image,
-                visible: true,
-                group: (relatedBlog.id + ""),
-                infoRel: gon.posts[i].name,
-                infoPostID: gon.posts[i].id
-            });
+            var marker = markerSettings(gon.posts[i].latitude, gon.posts[i].longitude, gon.posts[i].name, gon.posts[i].id);
             marker_array.push(marker);
-
-            infowindow = new google.maps.InfoWindow();
-
-            google.maps.event.addListener(marker, 'click', function() {
-                var thisMarker = marker_array[marker_array.indexOf(this)];
-                $.get('/users/' + this.infoPostID + '/fav_posts/').done(function(data) {
-
-                    var infowindow = new google.maps.InfoWindow({
-                        content: data
-                    });
-
-                    if (prev_infowindow) {
-                        prev_infowindow.close();
-                    };
-                    prev_infowindow = infowindow;
-                    infowindow.setContent(data);
-                    infowindow.open(map, thisMarker);
-                });
-            });
+            createMarkerListener(marker);
         };
     };
 
@@ -103,6 +59,62 @@ $(document).ready(function() {
         };
     };
 
+    var shouldMarkerExist = function(num) {
+        // Function Purpose:
+        // This function exists to check if the marker is appropriate for the current page (out of the Index, My Blogs and My Favorites pages.)
+        for (var j = 0; j < gon.blogs.length; j++) {
+            if (!onFavoriteMap() && !blogButtonExists(gon.blogs[j].id)) {
+                // This exists so that if the post doesn't have a blog_id of one of the buttons on the page for the My Blogs page, it doesn't assign the marker to the page.
+                continue;
+            };
+            if (gon.blogs[j].id === gon.posts[num].blog_id) {
+                image = markerImageSettings(j);
+                relatedBlog = gon.blogs[j];
+                return false;
+            };
+        };
+        return true;
+    };
+
+    var markerSettings = function(Lat, Lng, name, idNumber) {
+        // Function Purpose:
+        // This function exists to assign the properties for each marker.
+        var LatLng = new google.maps.LatLng(Lat, Lng);
+
+        return new google.maps.Marker({
+            position: LatLng,
+            map: map,
+            animation: google.maps.Animation.DROP,
+            clickable: true,
+            icon: image,
+            visible: true,
+            group: (relatedBlog.id + ""),
+            infoRel: name,
+            infoPostID: idNumber
+        });
+    };
+
+    var createMarkerListener = function(marker) {
+        // Function Purpose:
+        // This function exists to just create the event listener for the markers on the map and to add the correct info window by pulling the HTML in through an AJAX request.
+        google.maps.event.addListener(marker, 'click', function() {
+            var thisMarker = marker_array[marker_array.indexOf(this)];
+            $.get('/users/' + this.infoPostID + '/fav_posts/').done(function(data) {
+
+                var infowindow = new google.maps.InfoWindow({
+                    content: data
+                });
+
+                if (prev_infowindow) {
+                    prev_infowindow.close();
+                };
+                prev_infowindow = infowindow;
+                infowindow.setContent(data);
+                infowindow.open(map, thisMarker);
+            });
+        });
+    };
+
     var notUserFavorite = function(currentPost) {
         // Function Purpose:
         // This function checks if a user is logged in, then it checks if the current page is the My Favorites page and if it is, if the current post exists within the logged in users fav_posts array.
@@ -115,6 +127,8 @@ $(document).ready(function() {
     };
 
     var onFavoriteMap = function() {
+        // Function Purpose:
+        // This function checks if the user is on the Favorite Maps page.
         if ($('.my-favs-map').length > 0) {
             return true
         } else {
@@ -123,6 +137,8 @@ $(document).ready(function() {
     };
 
     var blogButtonExists = function(blogID) {
+        // Function Purpose:
+        // This function exists for the My Blogs page and checks if a post belongs to a subscribed blog.
         if ($('.button[data-id="' + blogID + '"]').length !== 0) {
             return true;
         } else {
@@ -131,8 +147,8 @@ $(document).ready(function() {
     };
 
     var isUserLoggedIn = function() {
-        //Function Purpose:
-        //This function exists to show if a user is currently logged in.
+        // Function Purpose:
+        // This function exists to show if a user is currently logged in.
         if (gon.user) {
             return true;
         } else {
@@ -141,19 +157,35 @@ $(document).ready(function() {
     };
 
     $(document).on('click', '.favorite-link', function() {
-        if ($(this).html() === 'Favorite') {
-            $(this).html('Unfavorite');
+        // Event Purpose:
+        // This event handler exists to call the function to change the info window and post the post_id to the current users fav_posts array.
+        changeFavoriteLink($(this));
+        $.post($(this).closest('form').attr('action'));
+    });
+
+    var changeFavoriteLink = function(link) {
+        // Function Purpose:
+        // Changes the state of the info window after clicking on the favorite or unfavorite link.
+        if (link.html() === 'Favorite') {
+            link.html('Unfavorite');
             $('.favorite-title').html('<img src="/assets/star.gif" alt="Favorite star">');
         } else {
-            $(this).html('Favorite');
+            link.html('Favorite');
             $('.favorite-title').html('');
         };
+    };
 
-        var url = $(this).closest('form').attr('action');
-        $.post(url).done(function() {});
+    $(document).on('click', '.menu-slider #favorite-blog', function() {
+        // Event Purpose:
+        // This event runs to call the function to change the follow button text and post the blog_id to the current users fav_blogs array.
+        setFavBlogName();
+        var url = "/users/" + $(this).attr('data-id') + "/fav_blog/";
+        console.log(url);
+        $.post(url);
     });
 
     var setFavBlogName = function() {
+        // Function Purpose:
         // This function runs after a user has logged in to set the correct name on the button.
         if ($('#favorite-blog').html() === "Follow Blog") {
             $('#favorite-blog').html("Unfollow Blog");
@@ -162,55 +194,66 @@ $(document).ready(function() {
         };
     };
 
-    $(document).on('click', '.menu-slider #favorite-blog', function() {
-        setFavBlogName();
-        var url = "/users/" + $(this).attr('data-id') + "/fav_blog/";
-        console.log(url);
-        $.post(url);
-    });
+    $(document).on('click', '.blog-button', function() {
+        // Event Purpose:
+        // This event exists to open and close the slide out menu for the blog buttons on the left-hand side of the page.
+        changeCheckedState($(this));
 
-    $('.button-group').each(function(i, buttonGroup) {
+        if (slideExists === true) {
+            var checkOpen = false;
 
-        var $buttonGroup = $(buttonGroup);
-        $buttonGroup.on('click', 'button', function() {
-            if ($(this).hasClass('is-checked')) {
-                $(this).removeClass('is-checked');
-            } else {
-                $('.button').removeClass('is-checked');
-                $(this).addClass('is-checked');
+            if ($(this).attr('data-id') !== $('#show-hide').attr('data-rel')) {
+                checkOpen = true;
             };
 
-            if (slideExists === true) {
-                var checkOpen = false;
+            clearSlideMenu();
+            slideExists = false;
 
-                if ($(this).attr('data-id') !== $('#show-hide').attr('data-rel')) {
-                    checkOpen = true;
-                };
-
-                $('.menu-slider').addClass('classless-div').removeClass('col-md-2');
-                $('.col-md-8').addClass('col-md-10').removeClass('col-md-8');
-                clearContent();
-                slideExists = false;
-
-                if (checkOpen) {
-                    $('.menu-slider').addClass('col-md-2').removeClass('classless-div');
-                    $('.col-md-10').addClass('col-md-8').removeClass('col-md-10');
-                    fillContent($(this).attr('data-id'));
-                    slideExists = true;
-                };
-            } else {
-
-                $('.menu-slider').addClass('col-md-2').removeClass('classless-div');
-                $('.col-md-10').addClass('col-md-8').removeClass('col-md-10');
-                fillContent($(this).attr('data-id'));
-                slideExists = true;
+            if (checkOpen) {
+                openSlideMenu($(this));
             };
 
-
-        });
+        } else {
+            openSlideMenu($(this));
+        };
     });
 
-    function findWithAttr(array, attr, value) {
+    var changeCheckedState = function(button) {
+        // Function Purpose:
+        // This function ensures that a button is always in the correct display state.
+        if (button.hasClass('is-checked')) {
+            button.removeClass('is-checked');
+        } else {
+            $('.button').removeClass('is-checked');
+            button.addClass('is-checked');
+        };
+    };
+
+    var clearSlideMenu = function() {
+        // Function Purpose:
+        // This function removes all the CSS properties for the slide out menu and then empty is used to delete all the buttons and list of links.
+        $("#favorite-blog").off();
+        $('#show-hide').off();
+        $(".menu-slider").css("height", "");
+        $(".menu-slider").css("overflow-y", "");
+        $(".menu-slider").css("padding-top", "");
+        $(".menu-slider").empty();
+        $('.menu-slider').addClass('classless-div').removeClass('col-md-2');
+        $('.col-md-8').addClass('col-md-10').removeClass('col-md-8');
+    };
+
+    var openSlideMenu = function(blogButton) {
+        // Function Purpose:
+        // This function exists to change the classes of the 3 main divs on the page to create the menu and then to call the fillContent function to put the correct content in the menu.
+        $('.menu-slider').addClass('col-md-2').removeClass('classless-div');
+        $('.col-md-10').addClass('col-md-8').removeClass('col-md-10');
+        fillContent(blogButton.attr('data-id'));
+        slideExists = true;
+    };
+
+    var findWithAttr = function(array, attr, value) {
+        // Function Purpose:
+        // This function returns the id number that matches the correct info window to bring up when the marker is selected.
         for (var i = 0; i < array.length; i += 1) {
             if (array[i][attr] === value) {
                 return i;
@@ -219,73 +262,91 @@ $(document).ready(function() {
     };
 
     var fillContent = function(value) {
-        $(".menu-slider").css('overflow-y', 'scroll');
-        $(".menu-slider").css('height', '600px');
-        $(".menu-slider").css("padding-top", "10px");
-
-        var startShowPhase;
-        if ($('button[data-id="' + value + '"]').hasClass('shown')) {
-            startShowPhase = 'Hide All';
-        } else {
-            startShowPhase = 'Show All';
-        };
-
+        // Function Purpose:
+        // This function exists to show 
+        setUpSlideMenu();
 
         $.get('/blogs/' + value + '/favorite/').done(function(data) {
-            var $favoriteBlogButton = $('<button id="favorite-blog" class="button" data-id="' + value + '">' + data + '</button>');
-            // <input type="hidden" name="mess" value="Favorite">
-            $(".menu-slider").append($favoriteBlogButton);
-
-            var $showHideButton = $('<button id="show-hide" class="button" data-rel="' + value + '">' + startShowPhase + '</button>');
-            $(".menu-slider").append($showHideButton);
-
-            var links = "";
-            for (var g = 0; g < gon.posts.length; g++) {
-                if (gon.posts[g].blog_id === parseInt(value)) {
-                    links += '<b>' + gon.posts[g].published + '</b><br>';
-                    var tempNum = findWithAttr(marker_array, 'infoRel', gon.posts[g].name);
-                    links += '<a href="javascript:void(0);" onclick="infoOpen(' + "'" + tempNum + "');" + '">' + gon.posts[g].name + '</a><br>';
-                }
-            }
-            $(".menu-slider").append($(links));
-
-            $("#show-hide").on('click', function() {
-                if ($('button[data-id="' + value + '"]').hasClass('shown')) {
-                    $('button[data-id="' + value + '"]').removeClass('shown');
-                    for (var i = 0; i < marker_array.length; i++) {
-                        if (marker_array[i].group === value) {
-                            marker_array[i].setVisible(false);
-                        }
-                    }
-                    $('#show-hide').html('Show All');
-                } else {
-                    $('button[data-id="' + value + '"]').addClass('shown');
-                    for (var i = 0; i < marker_array.length; i++) {
-                        if (marker_array[i].group === value) {
-                            marker_array[i].setVisible(true);
-                        }
-                    }
-                    $('#show-hide').html('Hide All');
-                }
-            });
+            // AJAX Purpose:
+            // This get call checks whether or not the current blog is favorited in the database and then return the correct text for the Follow/Unfollow button.
+            createSlideButtons(data, value);
+            createBlogLinks(value);
+            setUpShowHideHandler(value);
         });
     }
 
-
-
-    var clearContent = function() {
-        // This function removes all the CSS properties for the slide out menu and then empty is used to delete all the buttons and list of links.
-        $("#favorite-blog").off();
-        $(".menu-slider").css("height", "");
-        $(".menu-slider").css("overflow-y", "");
-        $(".menu-slider").css("padding-top", "");
-        $(".menu-slider").empty();
+    var setUpSlideMenu = function() {
+        // Function Purpose:
+        // This function sets up the menu on the page with the right size and format.
+        $(".menu-slider").css('overflow-y', 'scroll');
+        $(".menu-slider").css('height', '600px');
+        $(".menu-slider").css("padding-top", "10px");
     };
 
-    initialize();
+    var createSlideButtons = function(favoriteStartState, blogID) {
+        // Function Purpose:
+        // This function exists to create the Follow Blog button and the Show Hide button in the slide out menu each time it is created.
+        var $favoriteBlogButton = $('<button id="favorite-blog" class="button" data-id="' + blogID + '">' + favoriteStartState + '</button>');
+        $(".menu-slider").append($favoriteBlogButton);
 
+        var $showHideButton = $('<button id="show-hide" class="button" data-rel="' + blogID + '">' + startShowPhase(blogID) + '</button>');
+        $(".menu-slider").append($showHideButton);
+    };
+
+    var startShowPhase = function(blogID) {
+        // Function Purpose:
+        // This function exists to determine what the text on the Show/Hide markers button should be when the slide menu is opened.
+        if ($('button[data-id="' + blogID + '"]').hasClass('shown')) {
+            return 'Hide All';
+        } else {
+            return 'Show All';
+        };
+    };
+
+    var createBlogLinks = function(blogID) {
+        // Function Purpose:
+        // This function exists to create the list of posts in the slide out menu for the currently selected blog button.
+        var links = "";
+        for (var g = 0; g < gon.posts.length; g++) {
+            if (gon.posts[g].blog_id === parseInt(blogID)) {
+                links += '<b>' + gon.posts[g].published + '</b><br>';
+                var tempNum = findWithAttr(marker_array, 'infoRel', gon.posts[g].name);
+                links += '<a href="javascript:void(0);" onclick="infoOpen(' + "'" + tempNum + "');" + '">' + gon.posts[g].name + '</a><br>';
+            };
+        };
+        $(".menu-slider").append($(links));
+    };
+
+    var setUpShowHideHandler = function(blogID) {
+        // Function Purpose:
+        // This function exists to create the event handler for the Show/Hide button when it is created each time.
+        $("#show-hide").on('click', function() {
+            if ($('button[data-id="' + blogID + '"]').hasClass('shown')) {
+                $('button[data-id="' + blogID + '"]').removeClass('shown');
+                for (var i = 0; i < marker_array.length; i++) {
+                    if (marker_array[i].group === blogID) {
+                        marker_array[i].setVisible(false);
+                    }
+                }
+                $('#show-hide').html('Show All');
+            } else {
+                $('button[data-id="' + blogID + '"]').addClass('shown');
+                for (var i = 0; i < marker_array.length; i++) {
+                    if (marker_array[i].group === blogID) {
+                        marker_array[i].setVisible(true);
+                    }
+                }
+                $('#show-hide').html('Hide All');
+            }
+        });
+    }
+
+    createMap();
+    initializeMarkers();
 });
 
 var infoOpen = function(i) {
+    // Function Purpose:
+    // This function exists to create the info windows when the slide menu links are clicked.
     google.maps.event.trigger(marker_array[i], 'click');
 };
