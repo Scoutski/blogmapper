@@ -179,9 +179,11 @@ $(document).ready(function() {
         // Event Purpose:
         // This event runs to call the function to change the follow button text and post the blog_id to the current users fav_blogs array.
         setFavBlogName();
-        var url = "/users/" + $(this).attr('data-id') + "/fav_blog/";
-        console.log(url);
-        $.post(url);
+        if (isUserLoggedIn()) {
+            var url = "/users/" + $(this).attr('data-id') + "/fav_blog/";
+            console.log(url);
+            $.post(url);
+        };
     });
 
     var setFavBlogName = function() {
@@ -189,9 +191,11 @@ $(document).ready(function() {
         // This function runs after a user has logged in to set the correct name on the button.
         if ($('#favorite-blog').html() === "Follow Blog") {
             $('#favorite-blog').html("Unfollow Blog");
-        } else {
+        } else if ($('#favorite-blog').html() === "Unfollow Blog") {
             $('#favorite-blog').html("Follow Blog");
-        };
+        } else {
+            return;
+        }
     };
 
     $(document).on('click', '.blog-button', function() {
