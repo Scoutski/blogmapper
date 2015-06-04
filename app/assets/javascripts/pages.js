@@ -10,57 +10,44 @@ $(document).ready(function() {
     if ($('#map-canvas').length === 0) {
         return;
     }
-    for (var h = 0; h < gon.blogs.length; h++) {
-
-    };
 
     function initialize() {
+        // Function Purpose:
+        // This function sets up the map and drops the markers.
 
         var mapCanvas = document.getElementById('map-canvas');
-        var mapOptions = {
-            center: new google.maps.LatLng(-33.8752213, 151.1361061),
-            zoom: 12,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-        }
+        var mapOptions = initialMapSettings();
         map = new google.maps.Map(mapCanvas, mapOptions);
-
         var infowindow;
 
-
         for (var i = 0; i < gon.posts.length; i++) {
-            var relatedBlog;
-            var stop = false;
+            // This stop variable is a flag that exists to tell the initialize function to not drop a pin on the map.
+            var stop = true;
 
-            //This condition just checks that there is a user logged in.
-            if (gon.user) {
-                // If a user is logged in, this next check is used to skip putting a post marker on the map if the user is on the my favorites page.
-                if ((gon.user.fav_posts.indexOf(gon.posts[i].id) === -1) && ($('.my-favs-map').length > 0)) {
-                    stop = true;
-                };
-            };
             for (var j = 0; j < gon.blogs.length; j++) {
-                if (($('.button[data-id="' + gon.blogs[j].id + '"]').length === 0) && ($('.my-favs-map').length === 0)) {
-                    stop = true;
-                    break;
-                }
+                
+                if (!onFavoriteMap() && !blogButtonExists(gon.blogs[j].id)) {
+                    // This exists so that if the post doesn't have a blog_id of one of the buttons on the page for the My Blogs page, it doesn't assign the marker to the page.
+                    continue;
+                };
+
                 if (gon.blogs[j].id === gon.posts[i].blog_id) {
-                    var image = {
-                        url: gon.blogs[j].marker_url,
-                        scaledSize: new google.maps.Size(25, 25)
-                    }
-                    relatedBlog = gon.blogs[j];
+                    var image = markerImageSettings(j);
+                    var relatedBlog = gon.blogs[j];
+                    stop = false;
                     break;
                 };
             };
+
+            if (onFavoriteMap() && notUserFavorite(i)) {
+                stop = true;
+            }
 
             if (stop === true) {
                 continue;
             }
 
             var myLatLng = new google.maps.LatLng(gon.posts[i].latitude, gon.posts[i].longitude);
-
-            var temp = relatedBlog.id + "";
-
 
             // This creates the marker object that will be stored in the global marker_array.
             var marker = new google.maps.Marker({
@@ -70,7 +57,7 @@ $(document).ready(function() {
                 clickable: true,
                 icon: image,
                 visible: true,
-                group: temp,
+                group: (relatedBlog.id + ""),
                 infoRel: gon.posts[i].name,
                 infoPostID: gon.posts[i].id
             });
@@ -94,6 +81,62 @@ $(document).ready(function() {
                     infowindow.open(map, thisMarker);
                 });
             });
+        };
+    };
+
+    var initialMapSettings = function() {
+        // Function Purpose:
+        // This function just exists to return the settings for the map and the starting position.
+        return {
+            center: new google.maps.LatLng(-33.8752213, 151.1361061),
+            zoom: 12,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+    };
+
+    var markerImageSettings = function(blogID) {
+        // Function Purpose:
+        // This function exists to assign the properties for the marker image on the map.
+        return {
+            url: gon.blogs[blogID].marker_url,
+            scaledSize: new google.maps.Size(25, 25)
+        };
+    };
+
+    var notUserFavorite = function(currentPost) {
+        // Function Purpose:
+        // This function checks if a user is logged in, then it checks if the current page is the My Favorites page and if it is, if the current post exists within the logged in users fav_posts array.
+        if (isUserLoggedIn()) {
+            if (gon.user.fav_posts.indexOf(gon.posts[currentPost].id) === -1) {
+                return true;
+            };
+        };
+        return false;
+    };
+
+    var onFavoriteMap = function() {
+        if ($('.my-favs-map').length > 0) {
+            return true
+        } else {
+            return false;
+        };
+    };
+
+    var blogButtonExists = function(blogID) {
+        if ($('.button[data-id="' + blogID + '"]').length !== 0) {
+            return true;
+        } else {
+            return false;
+        }
+    };
+
+    var isUserLoggedIn = function() {
+        //Function Purpose:
+        //This function exists to show if a user is currently logged in.
+        if (gon.user) {
+            return true;
+        } else {
+            return false;
         };
     };
 

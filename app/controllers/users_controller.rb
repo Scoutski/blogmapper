@@ -41,14 +41,12 @@ class UsersController < ApplicationController
   def fav_post
     id = params[:id].to_i
 
-    # if @current_user.fav_posts.nil?
-    #   @current_user.fav_posts.push(id)
-    # if (@current_user.fav_posts.select { |post| post === id }.any?)
-    #     @current_user.fav_posts.delete(id)
-    # else
-    #   @current_user.fav_posts.push(id)
-    # end
-    # @current_user.save
+    if (@current_user.fav_posts.select { |post| post === id }.any?)
+        @current_user.fav_posts.delete(id)
+    else
+      @current_user.fav_posts.push(id)
+    end
+    @current_user.save
 
     respond_to do |format|
       format.all { render :nothing => true }
@@ -58,8 +56,6 @@ class UsersController < ApplicationController
   def fav_blog
     id = params[:id].to_i
 
-    # if @current_user.fav_blogs.nil?
-    #   @current_user.fav_blogs.push(id)
     if (@current_user.fav_blogs.select { |blog| blog === id }.any?)
       @current_user.fav_blogs.delete(id)
     else
