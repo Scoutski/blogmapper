@@ -32,7 +32,7 @@ $(document).ready(function() {
             var stop = false;
 
             //This condition just checks that there is a user logged in.
-            if (typeof gon.user !== 'undefined') {
+            if (gon.user) {
                 // If a user is logged in, this next check is used to skip putting a post marker on the map if the user is on the my favorites page.
                 if ((gon.user.fav_posts.indexOf(gon.posts[i].id) === -1) && ($('.my-favs-map').length > 0)) {
                     stop = true;
@@ -121,8 +121,9 @@ $(document).ready(function() {
 
     $(document).on('click', '.menu-slider #favorite-blog', function() {
         setFavBlogName();
-        var url = $(this).closest('form').attr('action');
-        // $.post(url).done(function() {});
+        var url = "/users/" + $(this).attr('data-id') + "/fav_blog/";
+        console.log(url);
+        $.post(url);
     });
 
     $('.button-group').each(function(i, buttonGroup) {
@@ -188,7 +189,7 @@ $(document).ready(function() {
 
 
         $.get('/blogs/' + value + '/favorite/').done(function(data) {
-            var $favoriteBlogButton = $('<form action="/users/' + value + '/fav_blog" method="post" data-remote="true"><button id="favorite-blog" class="button">' + data + '</button></form>');
+            var $favoriteBlogButton = $('<button id="favorite-blog" class="button" data-id="' + value + '">' + data + '</button>');
             // <input type="hidden" name="mess" value="Favorite">
             $(".menu-slider").append($favoriteBlogButton);
 
