@@ -248,10 +248,10 @@ $(document).ready(function() {
 
     var openSlideMenu = function(blogButton) {
         // Function Purpose:
-        // This function exists to change the classes of the 3 main divs on the page to create the menu and then to call the fillContent function to put the correct content in the menu.
+        // This function exists to change the classes of the 3 main divs on the page to create the menu and then to call the fillSlideMenuContent function to put the correct content in the menu.
         $('.menu-slider').addClass('col-md-2').removeClass('classless-div');
         $('.col-md-10').addClass('col-md-8').removeClass('col-md-10');
-        fillContent(blogButton.attr('data-id'));
+        fillSlideMenuContent(blogButton.attr('data-id'));
         slideExists = true;
     };
 
@@ -265,19 +265,17 @@ $(document).ready(function() {
         }
     };
 
-    var fillContent = function(value) {
+    var fillSlideMenuContent = function(value) {
         // Function Purpose:
-        // This function exists to show 
+        // This function exists to generate all the elements in the slide menu
         setUpSlideMenu();
 
         $.get('/blogs/' + value + '/favorite/').done(function(data) {
-            // AJAX Purpose:
-            // This get call checks whether or not the current blog is favorited in the database and then return the correct text for the Follow/Unfollow button.
             createSlideButtons(data, value);
             createBlogLinks(value);
             setUpShowHideHandler(value);
         });
-    }
+    };
 
     var setUpSlideMenu = function() {
         // Function Purpose:
